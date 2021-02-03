@@ -1,0 +1,45 @@
+#include "widget.h"
+#include "ui_widget.h"
+#include <QPainter>
+#include <QTimer>
+#include<QMouseEvent>
+Widget::Widget(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::Widget)
+{
+    this->setWindowFlags(Qt::FramelessWindowHint);
+    this->setAttribute(Qt::WA_TranslucentBackground);
+    ui->setupUi(this);
+    run1.load("F:\\QT_Code\\run1.png");
+    run2.load("F:\\QT_Code\\run2.png");
+    QTimer *timer=new QTimer(this);
+    timer->start(50);
+    connect(timer,QTimer::timeout,this,[=]
+    {
+        update();
+    });
+    dinoX=0,dinoY=0;
+}
+
+Widget::~Widget()
+{
+    delete ui;
+}
+void Widget::paintEvent(QPaintEvent *)
+{
+    static bool flag=false;
+    QPainter paint(this);
+    static int cnt=0;
+    if((cnt)%2)    paint.drawPixmap(dinoX,dinoY,run1);
+    else             paint.drawPixmap(dinoX,dinoY,run2);
+
+    this->move(cnt+=5,1000);
+
+}
+void Widget::mousePressEvent(QMouseEvent *ev)
+{
+    if(ev->button()==Qt::RightButton)
+    {
+        this->close();
+    }
+}
